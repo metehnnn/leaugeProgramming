@@ -1,0 +1,509 @@
+//METEHAN COSKUN NO:365330 OUTLOOK:365330@ogr.ktu.edu.tr Bireysel deðerlendirme 2
+
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <conio.h>
+#include <locale.h>
+#define TAKIM 10
+int EvSayac=0;
+int DepSayac=0;
+int tekKullanim=0;
+int galibiyetpuan,maglubiyetpuan,beraberlikpuan,takimsayisi;
+
+ struct takimlar {
+    char takimadi[15];
+    char takmaad[10];
+    int oynanan_mac;
+    int galibiyet;
+    int maglubiyet;
+    int beraberlik;
+    int atilan_gol;
+    int yenilen_gol;
+    int puan;
+    int averaj;
+
+    };
+
+ struct Mac{
+ 	char evsahibi[100];
+ 	char deplasman[100];
+
+ };
+
+
+void lig_tablosu(struct takimlar *dizi,struct Mac Mcyp);
+void puan_durumu(struct takimlar *dizi,struct Mac Mcyp);
+void mYap(struct takimlar dizi[],struct Mac Mcyp);
+void menu(struct takimlar *dizi,struct Mac Mcyp);
+void Sifirlama(struct takimlar dizi[]);
+void DmYap(struct takimlar *dizi,struct Mac Mcyp);
+
+
+int main(void)
+{
+    setlocale(LC_ALL,"Turkish");
+	struct Mac Mcyp;
+	struct takimlar dizi[TAKIM];
+	struct takimlar dizi2[4];
+
+    setlocale(LC_ALL,"Turkish");
+    printf("**********************************\n");
+    printf("TURKIYE SANAL LIGINE HOS GELDINIZ\n");
+    printf("**********************************\n");
+    Sifirlama(dizi);
+    lig_tablosu(dizi,Mcyp);
+    puan_durumu(dizi,Mcyp);
+    menu(dizi,Mcyp);
+
+    _getch();
+
+}
+
+void Sifirlama(struct takimlar dizi[]){
+	    for(int i=0;i<TAKIM;i++){// puan tablosu elemanlarý ilk basta 0'a esitlendi
+
+				dizi[i].oynanan_mac=0;
+				dizi[i].galibiyet=0;
+				dizi[i].maglubiyet=0;
+				dizi[i].beraberlik=0;
+				dizi[i].atilan_gol=0;
+				dizi[i].puan=0;
+				dizi[i].yenilen_gol=0;
+				dizi[i].averaj=0;
+		}
+
+
+
+}
+
+
+void DmYap(struct takimlar *dizi,struct Mac Mcyp){//Dosyadan mac girdisi alýnmasý icin fonksiyon
+system("cls");
+
+
+char EvAd;
+char DepAd;
+int EvPP;
+int DePP;
+int tutucu=0;
+
+int EvSakla,DepSakla;
+		FILE *dosya1;
+
+        dosya1=fopen("C:\\Users\\METEHAN\\Desktop\\maclar.txt","r");
+
+
+
+
+        while(!feof(dosya1)){// Dosyadan her bir satýr için mac sonuclarý okunmasý
+
+
+
+
+				fscanf(dosya1,"%c %d %c %d ",&EvAd,&EvPP,&DepAd,&DePP);
+        		printf("%c %d %c %d\n  ",EvAd,EvPP,DepAd,DePP);
+
+
+
+
+
+	 	for(int i=0;i<EvSayac;i++){//Evsahibi ve Deplasman arasýndaki mac kontrolu
+
+
+
+	if(Mcyp.evsahibi[i] == EvAd &&  Mcyp.deplasman[i] == DepAd){
+		tutucu=1;
+	}
+}
+if(tutucu==1){//Takimlarin birbiriyle maclarýnýn kontrolu
+	printf("\nBu Takimlar mac yapti\n");
+}
+
+
+
+if(tutucu==0){
+Mcyp.evsahibi[EvSayac]=EvAd;
+EvSayac++;
+Mcyp.deplasman[DepSayac]=DepAd;
+DepSayac++;
+
+
+for(int i=0;i<10;i++){//Ev sahibi takimlarin belirlenmesi
+	if(dizi[i].takmaad[0]==EvAd){
+		EvSakla=i;
+		break;
+	}
+
+}
+for(int i=0;i<10;i++){// Deplasman takimlarinin belirlenmesi
+	if(dizi[i].takmaad[0]==DepAd){
+		DepSakla=i;
+		break;
+	}
+}
+
+
+
+
+
+DePP=DePP/10;
+
+
+
+if(EvPP>DePP){// Puan durumunun guncellenmesi
+	dizi[EvSakla].oynanan_mac+=1;
+	dizi[EvSakla].galibiyet+=1;
+	dizi[EvSakla].atilan_gol+=EvPP;
+	dizi[EvSakla].yenilen_gol+=DePP;
+	dizi[EvSakla].averaj  = dizi[EvSakla].averaj+ (EvPP-DePP);
+	dizi[EvSakla].puan+=galibiyetpuan;
+
+	dizi[DepSakla].oynanan_mac+=1;
+	dizi[DepSakla].maglubiyet+=1;
+	dizi[DepSakla].atilan_gol+=DePP;
+	dizi[DepSakla].yenilen_gol+=EvPP;
+	dizi[DepSakla].averaj =dizi[DepSakla].averaj+ (DePP-EvPP);
+	dizi[DepSakla].puan+=maglubiyetpuan;
+
+
+}
+else if(EvPP==DePP){
+
+	dizi[EvSakla].oynanan_mac+=1;
+	dizi[EvSakla].beraberlik+=1;
+	dizi[EvSakla].atilan_gol+=EvPP;
+	dizi[EvSakla].yenilen_gol+=DePP;
+
+	dizi[EvSakla].puan+=beraberlikpuan;
+
+	dizi[DepSakla].oynanan_mac+=1;
+	dizi[DepSakla].beraberlik+=1;
+	dizi[DepSakla].atilan_gol+=DePP;
+	dizi[DepSakla].yenilen_gol+=EvPP;
+
+	dizi[DepSakla].puan+=beraberlikpuan;
+
+
+
+}
+else if(EvPP<DePP){
+
+    dizi[EvSakla].oynanan_mac+=1;
+	dizi[EvSakla].maglubiyet+=1;
+	dizi[EvSakla].atilan_gol+=EvPP;
+	dizi[EvSakla].yenilen_gol+=DePP;
+	dizi[EvSakla].averaj= dizi[EvSakla].averaj+(EvPP-DePP);
+	dizi[EvSakla].puan+=maglubiyetpuan;
+
+	dizi[DepSakla].oynanan_mac+=1;
+	dizi[DepSakla].galibiyet+=1;
+	dizi[DepSakla].atilan_gol+=DePP;
+	dizi[DepSakla].yenilen_gol+=EvPP;
+	dizi[DepSakla].averaj= dizi[DepSakla].averaj+(DePP-EvPP);
+	dizi[DepSakla].puan+=galibiyetpuan;
+
+
+}
+
+
+}
+
+ 	tutucu=0;
+
+
+
+					}
+				fclose(dosya1);
+
+
+
+
+
+
+
+
+
+	system("pause");
+    menu(dizi,Mcyp);
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+void menu(struct takimlar *dizi,struct Mac Mcyp){
+	system("cls");
+
+	int islem;
+	printf("     1.Lig Tablosu\n");
+	printf("     2.Puan Tablosu\n");
+	printf("     3.Mac Girme\n");
+	printf("     4.Dosyadan Mac Girme\n\n");
+	printf("islem seciniz: ");
+	scanf("%d",&islem);
+
+	switch(islem){//Kullanýcýnýn istegine gore sonuclarýn gosterilmesi
+		case 1:
+		lig_tablosu(dizi,Mcyp);
+		break;
+
+		case 2:
+			puan_durumu(dizi,Mcyp);
+			break;
+		case 3:
+			mYap(dizi,Mcyp);
+			break;
+		case 4:
+			DmYap(dizi,Mcyp);
+			break;
+
+
+
+		default:
+			printf("Hatali deger girdiniz..\n");
+			break;
+
+	}
+
+
+		}
+
+
+
+void mYap(struct takimlar *dizi,struct Mac Mcyp){// Kullanýcýdan mac sonucu alýnmasý
+system("cls");
+
+
+printf("mac sonucunu giriniz: ");
+char mac[10];
+gets(mac);
+gets(mac);
+
+
+char EvAd;
+char EvP[1];
+char DeP[1];
+char DepAd;
+int EvPP;
+int DePP;
+int tutucu=0;
+int sayac1=0,sayac2=0,sayac3=0,sayac4=0;
+int EvSakla,DepSakla;
+for(int i=0;i<10;i++)
+{
+	if(mac[i]==32){
+	continue;
+	}
+    if(sayac1==0){
+    	EvAd=mac[i];
+    	sayac1=1;
+    	continue;
+	}
+    if(sayac2==0){
+    	EvP[0]=mac[i];
+    	sayac2=1;
+    	continue;
+	}
+    if(sayac3==0){
+    	DepAd=mac[i];
+    	sayac3=1;
+    	continue;
+	}
+    if(sayac4==0){
+
+    	DeP[0]=mac[i];
+
+    	sayac4=1;
+    	continue;
+	}
+
+
+}
+
+
+
+for(int i=0;i<EvSayac;i++){//Ev sahibi ve Deplasman takimin kýsaad olarak alinmasi
+
+
+
+	if(Mcyp.evsahibi[i] == EvAd &&  Mcyp.deplasman[i] == DepAd){
+		tutucu=1;
+	}
+}
+if(tutucu==1){
+	printf("\nBu Takimlar mac yapti\n");
+}
+
+
+
+if(tutucu==0){
+Mcyp.evsahibi[EvSayac]=EvAd;
+EvSayac++;
+Mcyp.deplasman[DepSayac]=DepAd;
+DepSayac++;
+
+
+for(int i=0;i<10;i++){//Ev sahibi takimin saklanmasi
+	if(dizi[i].takmaad[0]==EvAd){
+		EvSakla=i;
+		break;
+	}
+
+}
+for(int i=0;i<10;i++){
+	if(dizi[i].takmaad[0]==DepAd){//Deplasman takiminin saklanmasi
+		DepSakla=i;
+		break;
+	}
+}
+
+
+
+
+EvPP=atoi(EvP);//char karakterin int karaktere donusturulmesi
+DePP=atoi(DeP);
+DePP=DePP/10;
+
+
+//Oynanan maclara gore puan tablosunun guncellenmesi
+if(EvPP>DePP){
+	dizi[EvSakla].oynanan_mac+=1;
+	dizi[EvSakla].galibiyet+=1;
+	dizi[EvSakla].atilan_gol+=EvPP;
+	dizi[EvSakla].yenilen_gol+=DePP;
+	dizi[EvSakla].averaj  = dizi[EvSakla].averaj+ (EvPP-DePP);
+	dizi[EvSakla].puan+=galibiyetpuan;
+
+	dizi[DepSakla].oynanan_mac+=1;
+	dizi[DepSakla].maglubiyet+=1;
+	dizi[DepSakla].atilan_gol+=DePP;
+	dizi[DepSakla].yenilen_gol+=EvPP;
+	dizi[DepSakla].averaj =dizi[DepSakla].averaj+ (DePP-EvPP);
+	dizi[DepSakla].puan+=maglubiyetpuan;
+
+
+}
+else if(EvPP==DePP){
+
+	dizi[EvSakla].oynanan_mac+=1;
+	dizi[EvSakla].beraberlik+=1;
+	dizi[EvSakla].atilan_gol+=EvPP;
+	dizi[EvSakla].yenilen_gol+=DePP;
+
+	dizi[EvSakla].puan+=beraberlikpuan;
+
+	dizi[DepSakla].oynanan_mac+=1;
+	dizi[DepSakla].beraberlik+=1;
+	dizi[DepSakla].atilan_gol+=DePP;
+	dizi[DepSakla].yenilen_gol+=EvPP;
+
+	dizi[DepSakla].puan+=beraberlikpuan;
+
+
+
+}
+else if(EvPP<DePP){
+
+    dizi[EvSakla].oynanan_mac+=1;
+	dizi[EvSakla].maglubiyet+=1;
+	dizi[EvSakla].atilan_gol+=EvPP;
+	dizi[EvSakla].yenilen_gol+=DePP;
+	dizi[EvSakla].averaj= dizi[EvSakla].averaj+(EvPP-DePP);
+	dizi[EvSakla].puan+=maglubiyetpuan;
+
+	dizi[DepSakla].oynanan_mac+=1;
+	dizi[DepSakla].galibiyet+=1;
+	dizi[DepSakla].atilan_gol+=DePP;
+	dizi[DepSakla].yenilen_gol+=EvPP;
+	dizi[DepSakla].averaj= dizi[DepSakla].averaj+(DePP-EvPP);
+	dizi[DepSakla].puan+=galibiyetpuan;
+
+
+}
+
+
+}
+
+system("pause");
+menu(dizi,Mcyp);
+
+}
+
+
+
+
+void lig_tablosu(struct takimlar *dizi,struct Mac Mcyp){
+        system("cls");
+
+		FILE *dosya1;
+        dosya1=fopen("C:\\Users\\METEHAN\\Desktop\\takimlar2.txt","r");
+        int i;
+        if(dosya1==NULL){
+        	printf("DOSYA BULUNAMADI..");
+		}
+ 			while(!feof(dosya1)){//Takim isimlerinin dosyadan okunmasi
+				for(i=0;i<=TAKIM;i++){
+				fscanf(dosya1,"%s",&dizi[i].takimadi);
+        		printf("%s\n",dizi[i].takimadi);	}	}
+				fclose(dosya1);
+			int a=65;
+	   for(i=0;i<TAKIM;i++){//Takmaadlarin ASCII deger olarak okunmasý
+	   	dizi[i].takmaad[0]=a;
+	   	printf("%c\n",dizi[i].takmaad[0]);
+	   	a++;
+	   }
+
+		if(tekKullanim==1){
+
+		system("pause");
+        menu(dizi,Mcyp);
+		}
+
+
+		}
+
+
+		void puan_durumu(struct takimlar *dizi,struct Mac Mcyp){
+			tekKullanim=1;
+			system("cls");
+
+
+			printf("\n");
+			printf("**********************************************\n");
+			printf("\tTÜRKÝYE SANAL LÝGÝNE HOÞGELDÝNÝZ\n");
+			printf("**********************************************\n\n");
+			printf("\tTAKIMLAR T.A O   G   M   B   A.G  Y.G   A   P \n");
+			printf("\t-------------------------------------------------\n");
+			int i;
+			for(i=0;i<TAKIM;i++){// Takimlarin ve girdilerinin puan tablosuna iþlenmesi
+				printf("%15s %3s %3d %3d %3d %3d %3d %4d %4d %3d\n",dizi[i].takimadi,dizi[i].takmaad,dizi[i].oynanan_mac,dizi[i].galibiyet,dizi[i].maglubiyet,dizi[i].beraberlik,dizi[i].atilan_gol,dizi[i].yenilen_gol,dizi[i].averaj,dizi[i].puan);
+				}	FILE*dosya2;
+
+			dosya2=fopen("C:\\Users\\METEHAN\\Desktop\\ayarlar.txt","r");
+
+
+				fscanf(dosya2,"%d %d %d %d",&takimsayisi,&galibiyetpuan,&beraberlikpuan,&maglubiyetpuan);//ayarlar.txt dosyasýndan deger okunmasý
+
+
+				fclose(dosya2);
+
+				system("pause");
+				menu(dizi,Mcyp);
+
+						}
